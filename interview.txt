@@ -1,2 +1,452 @@
-Interview Q & A
+Previous interview question & answers
 
+1. Reverse a String (Without Built-in Methods)
+
+You can use a simple loop from the end of the string to the beginning and build a new string.
+
+function reverseString(str) {
+  let reversed = '';
+  for (let i = str.length - 1; i >= 0; i--) {
+    reversed += str[i];
+  }
+  return reversed;
+}
+
+console.log(reverseString("hello")); // "olleh"
+
+2. Palindrome Check
+
+A palindrome reads the same forward and backward (like "madam"). You can reverse it manually or use two-pointer logic.
+
+function isPalindrome(str) {
+  let left = 0;
+  let right = str.length - 1;
+
+  while (left < right) {
+    if (str[left] !== str[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
+}
+
+console.log(isPalindrome("madam"));  // true
+console.log(isPalindrome("hello"));  // false
+
+3. Find the Largest Number in an Array
+function findLargest(arr) {
+  let largest = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > largest) {
+      largest = arr[i];
+    }
+  }
+  return largest;
+}
+
+console.log(findLargest([3, 7, 2, 9, 1])); // 9
+
+4. Count the Vowels in a String
+function countVowels(str) {
+  let count = 0;
+  let vowels = "aeiouAEIOU";
+
+  for (let i = 0; i < str.length; i++) {
+    if (vowels.includes(str[i])) count++;
+  }
+  return count;
+}
+
+console.log(countVowels("hello world")); // 3
+Reverse an array
+
+Two-pointer, in-place (no .reverse()):
+
+function reverseInPlace(arr){
+  let l = 0, r = arr.length - 1;
+  while (l < r) {
+    [arr[l], arr[r]] = [arr[r], arr[l]];
+    l++; r--;
+  }
+  return arr;
+}
+
+
+New array (no built-ins):
+
+function reversed(arr){
+  const out = [];
+  for (let i = arr.length - 1; i >= 0; i--) out.push(arr[i]);
+  return out;
+}
+
+
+Time O(n), space O(1) / O(n).
+
+Delete elements containing "re"
+
+Case-insensitive example, keep others:
+
+function removeContainingRe(arr){
+  const re = /re/i;
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (!re.test(String(arr[i]))) out.push(arr[i]);
+  }
+  return out;
+}
+// remove in place:
+function removeInPlace(arr){
+  let w = 0;
+  for (let r = 0; r < arr.length; r++){
+    if (!/re/i.test(String(arr[r]))) arr[w++] = arr[r];
+  }
+  arr.length = w;
+  return arr;
+}
+
+Palindrome (string)
+function isPalindrome(s){
+  let l = 0, r = s.length - 1;
+  while (l < r) if (s[l++] !== s[r--]) return false;
+  return true;
+}
+
+Remove duplicates
+function unique(arr){
+  const seen = new Set(), out = [];
+  for (const x of arr) if (!seen.has(x)) { seen.add(x); out.push(x); }
+  return out;
+}
+
+Flatten 1-level array
+function flatten1(arr){
+  const out = [];
+  for (const x of arr) Array.isArray(x) ? out.push(...x) : out.push(x);
+  return out;
+}
+
+Deep clone (simple, JSON-safe)
+const clone = obj => JSON.parse(JSON.stringify(obj)); // watch out: dates, functions lost
+
+Event loop quick hits
+
+Call stack executes sync code.
+
+Microtasks (Promises) run before macrotasks (setTimeout).
+
+await yields to microtask queue.
+
+Hoisting / TDZ
+
+var hoisted + initialized to undefined.
+
+let/const hoisted but in TDZ until the declaration line.
+
+Strings/Arrays quick ops (without fancy built-ins)
+
+Reverse string
+
+function reverseStr(s){ let out = ''; for (let i=s.length-1;i>=0;i--) out+=s[i]; return out; }
+
+
+Count vowels
+
+function countVowels(s){
+  const set = new Set('aeiouAEIOU'); let c=0;
+  for (const ch of s) if (set.has(ch)) c++;
+  return c;
+}
+
+
+Array rotate right by k
+
+function rotate(arr, k){
+  const n = arr.length; if (!n) return arr; k %= n;
+  const rev = (a,l,r)=>{ while(l<r){ [a[l],a[r]]=[a[r],a[l]]; l++; r--; } };
+  rev(arr,0,n-1); rev(arr,0,k-1); rev(arr,k,n-1);
+  return arr;
+}
+
+DOM/Browser basics
+
+Event delegation
+
+document.getElementById('list').addEventListener('click', e => {
+  if (e.target.matches('.item')) { /* handle */ }
+});
+
+
+Debounce / Throttle
+
+const debounce = (fn, delay) => {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(()=>fn(...args), delay); };
+};
+
+const throttle = (fn, delay) => {
+  let last = 0; return (...args) => {
+    const now = Date.now(); if (now - last >= delay) { last = now; fn(...args); }
+  };
+};
+
+
+LocalStorage JSON
+
+localStorage.setItem('key', JSON.stringify(value));
+const value = JSON.parse(localStorage.getItem('key') || 'null');
+
+React (quick)
+
+Functional vs class
+
+Functional + hooks. No this. Smaller, easier to test.
+
+Controlled input
+
+function Form(){
+  const [name,setName] = React.useState('');
+  return <input value={name} onChange={e=>setName(e.target.value)} />;
+}
+
+
+Memoization
+
+React.memo(Component) to skip re-renders if props unchanged.
+
+useMemo for expensive calculations.
+
+useCallback to memoize functions passed to children.
+
+Custom hook (filtering “re”)
+
+function useFilterRe(list){
+  return React.useMemo(
+    () => list.filter(x => !/re/i.test(String(x))),
+    [list]
+  );
+}
+
+
+Common pitfall
+Don’t put hooks in conditionals; keep dependency arrays correct; avoid recreating handlers unnecessarily if passing to deep trees.
+
+Node/Backend quick
+
+Simple server (Node http)
+
+const http = require('http');
+http.createServer((req,res) => {
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200, {'Content-Type':'application/json'});
+    return res.end(JSON.stringify({ok:true}));
+  }
+  res.writeHead(404); res.end();
+}).listen(3000);
+
+
+Express basics
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.get('/users', (req,res)=> res.json([{id:1}]));
+app.post('/users', (req,res)=> res.status(201).json(req.body));
+
+app.use((err, req, res, next) => { // error handler
+  console.error(err); res.status(500).json({error:'Internal'});
+});
+app.listen(3000);
+
+
+Middleware order matters.
+Auth → body parser → routes → error handler.
+
+Async/await route
+
+app.get('/item/:id', async (req,res,next)=>{
+  try {
+    const item = await store.get(req.params.id);
+    if (!item) return res.status(404).end();
+    res.json(item);
+  } catch (e){ next(e); }
+});
+
+
+JWT flow
+
+Client logs in → server issues signed JWT.
+
+Client sends Authorization: Bearer <token>.
+
+Server verifies signature and claims (exp, sub, roles).
+
+HTTP quick hits
+
+Idempotent: GET, PUT, DELETE; non-idempotent: POST, PATCH (usually).
+
+Status codes: 200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 429 Too Many Requests, 500 Server Error.
+
+Data/DB
+
+SQL vs NoSQL
+
+SQL: structured schema, JOINs, ACID.
+
+NoSQL: flexible schema, scale out, denormalize.
+
+Parameterized queries (avoid injection)
+
+SELECT * FROM users WHERE email = $1;
+
+
+Mongo CRUD (pseudocode)
+
+await db.collection('users').insertOne({name:'VJ'});
+await db.collection('users').find({active:true}).toArray();
+
+Testing & Git
+
+Jest unit test
+
+test('reverseInPlace', () => {
+  expect(reverseInPlace([1,2,3])).toEqual([3,2,1]);
+});
+
+
+Git basics
+
+git checkout -b feature/x
+git add -p
+git commit -m "feat: add x"
+git rebase main   # rewrite local history on top of main
+git merge feature # merge branch (creates a merge commit)
+
+
+Rebase for a clean linear history; merge for preserving branch context.
+
+
+==================
+Senior Technical Lead - Front End (React + NodeJS) Interview Cheat Sheet
+
+1. React Hooks
+Q: What are hooks?  
+A: Functions like useState, useEffect for state and side-effects in functional components.
+
+2. Virtual DOM
+Q: Why Virtual DOM?  
+A: Efficient updates using diffing instead of full DOM re-render.
+
+3. Performance in React
+Q: How to optimize React app?  
+A: Memoization (useMemo, useCallback), lazy loading, code splitting, React.memo.
+
+4. Redux vs MobX
+Q: Difference?  
+A: Redux: predictable, single store, strict immutability. MobX: observable, mutable, less boilerplate.
+
+5. Redux Middleware
+Q: Purpose?  
+A: Handles async logic, logging, error handling between dispatch & reducer.
+
+6. Node.js REST API Design
+Q: Key points?  
+A: Express/NestJS, JWT auth, async/await, layered architecture, validation, logging.
+
+7. Error Handling in Node.js
+Q: How?  
+A: try/catch, global middleware, structured error responses, logging.
+
+8. Securing APIs
+Q: Techniques?  
+A: HTTPS, JWT/OAuth2, CORS, rate limiting, input validation.
+
+9. Design Patterns
+Q: Examples?  
+A: Singleton, Observer (Redux), Factory, Decorator.
+
+10. Scalable Frontend Architecture
+Q: Components?  
+A: Micro frontends, design system, API Gateway, CI/CD, feature flags, observability.
+
+11. Testing
+Q: Tools?  
+A: Jest, React Testing Library, Cypress/Playwright for integration.
+
+12. CI/CD Pipeline
+Q: Setup?  
+A: PR checks → automated tests → deploy dev/stage/prod with approvals.
+
+13. Mentorship
+Q: How to mentor juniors?  
+A: Pair programming, code reviews, feature ownership, coding standards.
+
+14. Team Conflicts
+Q: Resolution approach?  
+A: Listen → Data-driven POC → Escalate if needed.
+
+15. Lifecycle methods vs Hooks
+Q: Mapping?  
+A: componentDidMount → useEffect([]), componentWillUnmount → cleanup in useEffect.
+
+16. REST API vs GraphQL
+Q: Difference?  
+A: REST: multiple endpoints, over/under-fetching. GraphQL: single endpoint, client-controlled queries.
+
+17. JWT Authentication
+Q: Flow?  
+A: Login → Token issued → Token in headers → Verify on backend.
+
+18. Error Boundaries in React
+Q: Purpose?  
+A: Catch render errors, show fallback UI, prevent crashes.
+
+19. Context API vs Redux
+Q: When to use?  
+A: Context: small global state. Redux: complex state with middleware, devtools.
+
+20. TypeScript Basics
+Q: Type vs Interface?  
+A: Interface extends/merges well. Type handles unions, conditional types.
+
+21. Async/Await
+Q: Benefits over callbacks?  
+A: Cleaner, sequential async code, better error handling.
+
+22. Debounce Function
+Q: Use case?  
+A: Limit API calls on search input.
+Example:
+function debounce(fn, delay){ let t; return(...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),delay);} }
+
+23. Code Splitting
+Q: Tool in React?  
+A: React.lazy, Suspense, dynamic imports.
+
+24. Accessibility
+Q: Standards followed?  
+A: WCAG 2.1, aria-attributes, keyboard navigation.
+
+25. Responsive UI
+Q: Techniques?  
+A: CSS Grid/Flexbox, media queries, responsive units.
+
+26. Git Commands
+Q: merge vs rebase?  
+A: merge = keep history. rebase = linear history.
+
+27. SQL vs NoSQL
+Q: Difference?  
+A: SQL: structured, relational. NoSQL: flexible schema, scale-out.
+
+28. OOPS in JavaScript
+Q: Concepts?  
+A: Encapsulation, Inheritance (prototype), Polymorphism, Abstraction.
+
+29. Package Managers
+Q: npm vs yarn?  
+A: Yarn faster, deterministic lockfile; npm default, simpler.
+
+30. Leadership Skills
+Q: How to motivate team?  
+A: Set clear goals, recognize efforts, career growth focus.
